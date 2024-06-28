@@ -39,8 +39,9 @@
  */
 
 ior_aiori_t *available_aiori[] = {
-        &infinifs_aiori,
-        
+#ifdef USE_INFINIFS_AIORI
+	&infinifs_aiori,,
+#endif
 #ifdef USE_POSIX_AIORI
         &posix_aiori,
 #endif

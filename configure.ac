@@ -396,6 +396,21 @@ PKG_CHECK_MODULES([FINCHFS], [finchfs],
   [with_finchfs=no])
 AM_CONDITIONAL([USE_FINCHFS_AIORI], [test x$with_finchfs != xno])
 
+# INFINIFS support
+AC_ARG_WITH([infinifs],
+        [AS_HELP_STRING([--with-infinifs],
+           [support IO with libinfinifs backend @<:@default=no@:>@])],
+        [],
+        [with_infinifs=no])
+AS_IF([test "x$with_infinifs" != xno], [
+        INFINIFS_RPATH="$(realpath ..)"
+        AC_SUBST(INFINIFS_RPATH)
+])
+AM_CONDITIONAL([USE_INFINIFS_AIORI], [test x$with_cephfs = xyes])
+AM_COND_IF([USE_INFINIFS_AIORI],[
+        AC_DEFINE([USE_INFINIFS_AIORI], [], [Build INFINIFS backend AIORI])
+])
+
 # aws4c is needed for the S3 backend (see --with-S3, below).
 # Version 0.5.2 of aws4c is available at https://github.com/jti-lanl/aws4c.git
 # Install it something like this:

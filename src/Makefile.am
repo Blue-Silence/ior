@@ -124,6 +124,10 @@ extraLDFLAGS += @FINCHFS_RPATH@
 extraLDADD += @FINCHFS_LIBS@
 endif
 
+if USE_INFINIFS_AIORI
+extraSOURCES += aiori-INFINIFS.c
+endif
+
 if USE_S3_4C_AIORI
 extraSOURCES  += aiori-S3-4c.c
 if AWS4C_DIR
