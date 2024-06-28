@@ -125,7 +125,13 @@ extraLDADD += @FINCHFS_LIBS@
 endif
 
 if USE_INFINIFS_AIORI
-extraSOURCES += aiori-INFINIFS.c
+extraSOURCES	+= aiori-INFINIFS.c
+extraCPPFLAGS 	+= -I/home/usera/NEW_MDS/mds_c_wrapper
+extraLDFLAGS 	+= -L/home/usera/NEW_MDS/mds_c_wrapper/target/debug
+extraLDADD 		+= -lmds_c_wrapper
+extraLDADD 		+= -lstdc++
+extraLDADD 		+= -lm
+extraLDADD 		+= -ldl
 endif
 
 if USE_S3_4C_AIORI
