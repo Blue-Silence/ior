@@ -10,7 +10,7 @@
 *                                                                              *
 ********************************************************************************
 *
-* Implement abstract I/O interface for FOO.
+* Implement abstract I/O interface for INFINIFS.
 *
 \******************************************************************************/
 
@@ -80,7 +80,7 @@ static int INFINIFS_StatFS(const char *path, ior_aiori_statfs_t *stat, aiori_mod
 static int INFINIFS_MkDir(const char *path, mode_t mode, aiori_mod_opt_t *options);
 static int INFINIFS_RmDir(const char *path, aiori_mod_opt_t *options);
 static int INFINIFS_Access(const char *path, int mode, aiori_mod_opt_t *options);
-static int FOO_Stat(const char *path, struct stat *buf, aiori_mod_opt_t *options);
+static int INFINIFS_Stat(const char *path, struct stat *buf, aiori_mod_opt_t *options);
 static void INFINIFS_Sync(aiori_mod_opt_t *);
 static option_help * INFINIFS_options();
 
@@ -106,7 +106,7 @@ ior_aiori_t infinifs_aiori = {
         .mkdir = INFINIFS_MkDir,
         .rmdir = INFINIFS_RmDir,
         .access = INFINIFS_Access,
-        .stat = FOO_Stat,
+        .stat = INFINIFS_Stat,
         .sync = INFINIFS_Sync,
         .enable_mdtest = true,
 };
@@ -235,7 +235,7 @@ static int INFINIFS_StatFS(const char *path, ior_aiori_statfs_t *stat_buf, aiori
 
 static int INFINIFS_MkDir(const char *path, mode_t mode, aiori_mod_opt_t *options)
 {
-        return infinifs_mkdir(cmount, pfix(path), mode);
+        return infinifs_mkdir(cmount, pfix(path));
 }
 
 static int INFINIFS_RmDir(const char *path, aiori_mod_opt_t *options)
@@ -249,9 +249,25 @@ static int INFINIFS_Access(const char *path, int mode, aiori_mod_opt_t *options)
         return 0;
 }
 
-static int FOO_Stat(const char *path, struct stat *buf, aiori_mod_opt_t *options)
+#define UNDEFINED -1
+
+static int INFINIFS_Stat(const char *path, struct stat *buf, aiori_mod_opt_t *options)
 {
-        return ceph_stat(cmount, pfix(path), buf);
+        buf->st_dev = 0;
+        buf->st_ino = 0;
+        buf->st_mode = UNDEFINED;
+        buf->st_nlink = 1; //We don't support hard link yet.
+        buf->st_uid = 0;
+        buf->st_gid = 0; //For now we assume no user control.
+        buf->st_rdev = 0;
+        buf->st_size = 0;
+        buf->st_blksize = 0;
+        buf->st_blocks = 0;
+        buf->st_atime = UNDEFINED;
+        buf->st_mtime = UNDEFINED;
+        buf->st_ctime = UNDEFINED;
+
+        return infinifs_stat(mount.client, pfix(path), &(buf->st_mode), &(buf->st_atime), &(buf->st_mtime), &(buf->st_ctime));
 }
 
 static void INFINIFS_Sync(aiori_mod_opt_t *options)
