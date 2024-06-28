@@ -30,16 +30,6 @@
 
 #include "infinifs_client_header.h"
 
-#define CEPH_O_RDONLY          00000000
-#define CEPH_O_WRONLY          00000001
-#define CEPH_O_RDWR            00000002
-#define CEPH_O_CREAT           00000100
-#define CEPH_O_EXCL            00000200
-#define CEPH_O_TRUNC           00001000
-#define CEPH_O_LAZY            00020000
-#define CEPH_O_DIRECTORY       00200000
-#define CEPH_O_NOFOLLOW        00400000
-
 /************************** O P T I O N S *****************************/
 struct INFINIFS_options{
   char * config_path;
@@ -62,7 +52,6 @@ struct {
     void * client;
 } mount;
 
-static struct ceph_mount_info *cmount;
 
 /**************************** P R O T O T Y P E S *****************************/
 static void INFINIFS_Init();
@@ -235,12 +224,12 @@ static int INFINIFS_StatFS(const char *path, ior_aiori_statfs_t *stat_buf, aiori
 
 static int INFINIFS_MkDir(const char *path, mode_t mode, aiori_mod_opt_t *options)
 {
-        return infinifs_mkdir(cmount, pfix(path));
+        return infinifs_mkdir(mount.client, pfix(path));
 }
 
 static int INFINIFS_RmDir(const char *path, aiori_mod_opt_t *options)
 {
-        return infinifs_rmdir(cmount, pfix(path));
+        return infinifs_rmdir(mount.prefix, pfix(path));
 }
 
 static int INFINIFS_Access(const char *path, int mode, aiori_mod_opt_t *options)
