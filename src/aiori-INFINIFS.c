@@ -133,6 +133,7 @@ static void INFINIFS_Init()
         /* Short circuit if the options haven't been filled yet. */
         if (!o.config_path || !o.prefix ) {
                 WARN("INFINIFS_Init() called before options have been populated!");
+                printf("%ld\n%ld\n",o.config_path,o.prefix);
                 return;
         }
 
@@ -158,10 +159,15 @@ static aiori_fd_t *INFINIFS_Create(char *path, int flags, aiori_mod_opt_t *optio
         int* fd;
         fd = (int *)malloc(sizeof(int));
 
+        printf("Creating: %s\n",file);
+
         *fd = infinifs_create(mount.client, file);
+
+        printf("1\n");
         if (*fd < 0) {
                 INFINIFS_ERR("infinifs_create failed", *fd);
         }
+        printf("2\n");
         return (void *) fd;
 }
 
@@ -224,18 +230,23 @@ static int INFINIFS_StatFS(const char *path, ior_aiori_statfs_t *stat_buf, aiori
 
 static int INFINIFS_MkDir(const char *path, mode_t mode, aiori_mod_opt_t *options)
 {
+        printf("\n\nMkdir:%s\n\n",pfix(path));
         return infinifs_mkdir(mount.client, pfix(path));
 }
 
 static int INFINIFS_RmDir(const char *path, aiori_mod_opt_t *options)
 {
-        return infinifs_rmdir(mount.prefix, pfix(path));
+        return infinifs_rmdir(mount.client, pfix(path));
 }
 
 static int INFINIFS_Access(const char *path, int mode, aiori_mod_opt_t *options)
 {
         //For now WE DO NOT CHECK FOR USER PERMISSION. 
-        return 0;
+        printf("Check access for: %s\n%s\n",path, pfix(path));
+        if(*pfix(path) == '\0')
+                return 0; //Root can always be accessed.
+        printf("AAA\n"); 
+        return infinifs_access(mount.client, pfix(path));
 }
 
 #define UNDEFINED -1
