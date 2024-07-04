@@ -71,6 +71,7 @@ static int INFINIFS_RmDir(const char *path, aiori_mod_opt_t *options);
 static int INFINIFS_Access(const char *path, int mode, aiori_mod_opt_t *options);
 static int INFINIFS_Stat(const char *path, struct stat *buf, aiori_mod_opt_t *options);
 static void INFINIFS_Sync(aiori_mod_opt_t *);
+static int INFINIFS_rename(const char *oldfile, const char *newfile, aiori_mod_opt_t * param);
 static option_help * INFINIFS_options();
 
 static aiori_xfer_hint_t * hints = NULL;
@@ -97,6 +98,7 @@ ior_aiori_t infinifs_aiori = {
         .access = INFINIFS_Access,
         .stat = INFINIFS_Stat,
         .sync = INFINIFS_Sync,
+        .rename = INFINIFS_rename,
         .enable_mdtest = true,
 };
 
@@ -151,9 +153,13 @@ static void INFINIFS_Final()
         mount.client = NULL;
 }
 
+int cnt = 0;
 
 static aiori_fd_t *INFINIFS_Create(char *path, int flags, aiori_mod_opt_t *options)
 {
+        cnt++;
+        printf("Start create. CNT:%d\n",cnt);
+
         const char *file = pfix(path);
         int* fd;
         fd = (int *)malloc(sizeof(int));
@@ -163,12 +169,15 @@ static aiori_fd_t *INFINIFS_Create(char *path, int flags, aiori_mod_opt_t *optio
         if (*fd < 0) {
                 INFINIFS_ERR("infinifs_create failed", *fd);
         }
-
+        //printf("End create\n\n");
         return (void *) fd;
 }
 
 static aiori_fd_t *INFINIFS_Open(char *path, int flags, aiori_mod_opt_t *options)
 {
+        cnt++;
+        printf("Start open. CNT:%d\n",cnt);
+
         const char *file = pfix(path);
         int* fd;
         fd = (int *)malloc(sizeof(int));
@@ -194,6 +203,9 @@ static void INFINIFS_Fsync(aiori_fd_t *file, aiori_mod_opt_t *options)
 
 static void INFINIFS_Close(aiori_fd_t *file, aiori_mod_opt_t *options)
 {
+        cnt++;
+        printf("Start close. CNT:%d\n",cnt);
+
         int fd = *(int *) file;
         int ret = infinifs_close(mount.client, fd);
         if (ret < 0) {
@@ -205,6 +217,9 @@ static void INFINIFS_Close(aiori_fd_t *file, aiori_mod_opt_t *options)
 
 static void INFINIFS_Delete(char *path, aiori_mod_opt_t *options)
 {
+        cnt++;
+        printf("Start delete. CNT:%d\n",cnt);
+
         int ret = infinifs_delete(mount.client, pfix(path));
         if (ret < 0) {
                 INFINIFS_ERR("infinifs_delete failed", ret);
@@ -226,16 +241,29 @@ static int INFINIFS_StatFS(const char *path, ior_aiori_statfs_t *stat_buf, aiori
 
 static int INFINIFS_MkDir(const char *path, mode_t mode, aiori_mod_opt_t *options)
 {
-        return infinifs_mkdir(mount.client, pfix(path));
+        cnt++;
+        printf("Start mkdir. CNT:%d\n",cnt);
+
+        int re = infinifs_mkdir(mount.client, pfix(path));
+        //printf("Done mkidr\n\n\n");
+        return re;
 }
 
 static int INFINIFS_RmDir(const char *path, aiori_mod_opt_t *options)
 {
-        return infinifs_rmdir(mount.client, pfix(path));
+        cnt++;
+        printf("Start rm. CNT:%d\n",cnt);
+
+        int re = infinifs_rmdir(mount.client, pfix(path));
+        //printf("Done rm\n");
+        return re;
 }
 
 static int INFINIFS_Access(const char *path, int mode, aiori_mod_opt_t *options)
 {
+        cnt++;
+        printf("Start access. CNT:%d\n",cnt);
+
         //For now WE DO NOT CHECK FOR USER PERMISSION. 
         if(*pfix(path) == '\0')
                 return 0; //Root can always be accessed.
@@ -246,6 +274,9 @@ static int INFINIFS_Access(const char *path, int mode, aiori_mod_opt_t *options)
 
 static int INFINIFS_Stat(const char *path, struct stat *buf, aiori_mod_opt_t *options)
 {
+        cnt++;
+        printf("Start stat. CNT:%d\n",cnt);
+
         buf->st_dev = 0;
         buf->st_ino = 0;
         buf->st_mode = UNDEFINED;
@@ -266,4 +297,9 @@ static int INFINIFS_Stat(const char *path, struct stat *buf, aiori_mod_opt_t *op
 static void INFINIFS_Sync(aiori_mod_opt_t *options)
 {
         //Empty function for now.
+}
+
+static int INFINIFS_rename(const char *oldfile, const char *newfile, aiori_mod_opt_t * param)
+{
+	return (infinifs_rename(mount.client, pfix(oldfile), pfix(newfile)));
 }
