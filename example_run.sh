@@ -1,0 +1,1 @@
+mpirun -n 32 ./src/mdtest -d / -C -n 3000 -a INFINIFS --INFINIFS.config_path=$HOME/MDS_FINAL/new_mds/config_cluster --INFINIFS.prefix=/
