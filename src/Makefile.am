@@ -126,12 +126,13 @@ endif
 
 if USE_INFINIFS_AIORI
 extraSOURCES	+= aiori-INFINIFS.c
-extraCPPFLAGS 	+= -I/home/usera/NEW_MDS/mds_c_wrapper
-extraLDFLAGS 	+= -L/home/usera/NEW_MDS/mds_c_wrapper/target/debug
+extraCPPFLAGS 	+= -I/homes/junhao/MDS_FINAL/mds_c_wrapper
+extraLDFLAGS 	+= -L/homes/junhao/MDS_FINAL/mds_c_wrapper/target/release
 extraLDADD 		+= -lmds_c_wrapper
 extraLDADD 		+= -lstdc++
 extraLDADD 		+= -lm
 extraLDADD 		+= -ldl
+extraLDADD 		+= -lz
 endif
 
 if USE_S3_4C_AIORI

@@ -403,7 +403,7 @@ AC_ARG_WITH([infinifs],
         [],
         [with_infinifs=no])
 AS_IF([test "x$with_infinifs" != xno], [
-        #INFINIFS_RPATH="/home/usera/NEW_MDS/mds_c_wrapper"
+        #INFINIFS_RPATH="/homes/junhao/MDS_FINAL/mds_c_wrapper"
         #AC_SUBST(INFINIFS_RPATH)
 ])
 AM_CONDITIONAL([USE_INFINIFS_AIORI], [test x$with_infinifs != xno])
