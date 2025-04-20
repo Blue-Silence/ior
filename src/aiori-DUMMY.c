@@ -160,22 +160,37 @@ static int DUMMY_statfs (const char * path, ior_aiori_statfs_t * stat, aiori_mod
 }
 
 static int DUMMY_mkdir (const char *path, mode_t mode, aiori_mod_opt_t * options){
+  if(verbose > 4){
+    fprintf(out_logfile, "DUMMY mkdir: %s\n", path);
+  }
   return 0;
 }
 
 static int DUMMY_rmdir (const char *path, aiori_mod_opt_t * options){
+  if(verbose > 4){
+    fprintf(out_logfile, "DUMMY rmdir: %s\n", path);
+  }
   return 0;
 }
 
 static int DUMMY_access (const char *path, int mode, aiori_mod_opt_t * options){
+  if(verbose > 4){
+    fprintf(out_logfile, "DUMMY access: %s\n", path);
+  }
   return 0;
 }
 
 static int DUMMY_stat (const char *path, struct stat *buf, aiori_mod_opt_t * options){
+  if(verbose > 4){
+    fprintf(out_logfile, "DUMMY stat: %s\n", path);
+  }
   return 0;
 }
 
 static int DUMMY_rename (const char *path, const char *path2, aiori_mod_opt_t * options){
+  if(verbose > 4){
+    fprintf(out_logfile, "DUMMY rename: %s\n", path);
+  }
   return 0;
 }
 
